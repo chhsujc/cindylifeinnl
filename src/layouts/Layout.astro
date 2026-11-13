@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { categories, photoCredits } from '../data/site';
+interface Props { title?: string; description?: string; }
+const { title = 'Home', description = 'A personal notebook on life in the Netherlands, travels around the world, and ideas from books.' } = Astro.props;
+const path = Astro.url.pathname;
+const active = (href: string) => href === '/' ? path === '/' : path.startsWith(href);
+---
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={description} /><meta name="theme-color" content="#F8F5EF" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>{title} · The Living Notebook</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至內容 · Skip to content</a>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="/" aria-label="The Living Notebook home"><Icon name="leaf" /><span><strong lang="en">The Living Notebook</strong><small lang="en">Life in NL · Travel · Books · Ideas</small></span></a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="main-navigation">Menu <span aria-hidden="true">☰</span></button>
+    <nav id="main-navigation" aria-label="Main navigation">
+      <a href="/" class:list={[{ active: active('/') }]} aria-current={active('/') ? 'page' : undefined}>Home</a>
+      <div class="notes-nav"><a href="/notes/" class:list={[{ active: active('/notes/') }]} aria-current={path === '/notes/' ? 'page' : undefined}>Notes 文章</a><details class="nav-dropdown"><summary aria-label="Notes categories">⌄</summary><div class="dropdown-panel"><a href="/notes/">All notes 所有文章</a>{categories.map(c => <a href={`/${c.id}/`}>{c.en} {c.zh}</a>)}</div></details></div>
+      {categories.filter(c => c.id !== 'ideas').map(c => <a href={`/${c.id}/`} class:list={[{ active: active(`/${c.id}/`) }]} aria-current={active(`/${c.id}/`) ? 'page' : undefined}>{c.en} <span>{c.zh}</span></a>)}
+      <a href="/about/" class:list={[{ active: active('/about/') }]} aria-current={active('/about/') ? 'page' : undefined}>About</a>
+      <a class="search-link" href="/notes/#search" aria-label="Search notes"><Icon name="search" /></a>
+    </nav>
+  </div></header>
+  <main id="main"><slot /></main>
+  <footer class="site-footer container"><div><a class="footer-brand" href="/">The Living Notebook</a><p>把日子寫成筆記，讓想法慢慢生長。</p></div><div class="footer-end"><p>Life, thoughtfully collected.</p><details><summary>Photography credits</summary><ul>{photoCredits.map(photo => <li><a href={`https://images.unsplash.com/photo-${photo.id}`}>{photo.name} · Unsplash</a></li>)}</ul></details><small>© {new Date().getFullYear()} The Living Notebook</small></div></footer>
+  <script>
+    const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+    const nav = document.querySelector<HTMLElement>('#main-navigation');
+    toggle?.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(expanded));
+      nav?.classList.toggle('is-open', expanded);
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        document.querySelectorAll<HTMLDetailsElement>('details[open]').forEach(el => el.open = false);
+        if (toggle?.getAttribute('aria-expanded') === 'true') {
+          toggle.setAttribute('aria-expanded', 'false'); nav?.classList.remove('is-open'); toggle.focus();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

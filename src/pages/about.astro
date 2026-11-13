@@ -1,9 +1,5 @@
-<a href="/">Home</a>
-<a href="/about/">About</a>
-<a href="/lifeinnl/">Life in NL</a>
-<html lang="en">
-	<body>
-		<h1>About me</h1>
-		<p>Welcome to the about page!</p>
-	</body>
-</html>
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+<Layout title="About"><div class="container about-page"><header class="page-heading"><p class="eyebrow">A NOTE BEFORE WE BEGIN</p><h1>About <span>關於這裡</span></h1><p>A personal notebook, always in progress.</p></header><div class="about-grid"><div class="about-photo"><img src="/images/books.jpg" alt="A notebook and a cup of coffee on a wooden desk" width="1000" height="700" /><span>READ. WANDER. WONDER.</span></div><div class="prose"><Icon name="leaf" /><h2>把生活，慢慢寫下來。</h2><p>歡迎來到 The Living Notebook。這裡是一個記錄荷蘭生活、旅行見聞、閱讀筆記與日常思考的空間。</p><p lang="en">Welcome to The Living Notebook: a place for life in the Netherlands, journeys near and far, and the ideas we find between the pages of a book.</p><p>不急著找到所有答案，只希望把值得記得的片刻，好好留下。</p><p class="demo-notice">這份網站目前使用示範文章與閱讀更新。關於作者的故事，留待親自寫下。<br/>The articles and reading updates are samples. The author's own story is still to come.</p><a class="more-notes" href="/notes/">Explore the notebook <Icon name="arrow" /></a></div></div></div></Layout>

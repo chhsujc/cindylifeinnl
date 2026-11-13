@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArticleCard from './ArticleCard.astro';
+import Sidebar from './Sidebar.astro';
+import { articles, categories, tags, type Category } from '../data/articles';
+interface Props { category?: Category; }
+const { category } = Astro.props;
+const info = categories.find(c => c.id === category);
+const entries = category ? articles.filter(a => a.category === category) : articles;
+---
+<Layout title={info?.en ?? 'Notes'}>
+  <div class="container listing-page"><header class="page-heading"><p class="eyebrow">THE LIVING NOTEBOOK</p><h1>{info?.en ?? 'Notes'} <span>{info?.zh ?? '文章'}</span></h1><p>{info?.description ?? '生活、旅行、閱讀，還有那些值得留下的想法。'}</p></header>
+  <div class="content-grid"><section aria-label="Article listing">
+    {!category && <div class="filters"><form id="search" action="/notes/" method="get" role="search"><label for="query">Search the notebook · 搜尋筆記</label><div class="search-row"><input type="search" id="query" name="q" placeholder="A place, a book, an idea…" /><button type="submit">Search 搜尋</button></div><input type="hidden" name="tag" id="tag-input" /></form><div class="tags filter-tags"><a href="/notes/" data-filter-tag="" aria-current="true">All 全部</a>{tags.map(tag => <a href={`/notes/?tag=${encodeURIComponent(tag)}`} data-filter-tag={tag}># {tag}</a>)}</div><p id="result-count" aria-live="polite"></p></div>}
+    <div class="article-list">{entries.map(article => <ArticleCard article={article} />)}</div><div id="empty-state" class="empty-state" hidden><h2>還沒找到這則筆記</h2><p>No notes match your search. Try another word or clear your filters.</p><a href="/notes/">Show all notes →</a></div>
+  </section><Sidebar /></div></div>
+  {!category && <script>
+    const form = document.querySelector<HTMLFormElement>('#search');
+    const query = document.querySelector<HTMLInputElement>('#query');
+    const tagInput = document.querySelector<HTMLInputElement>('#tag-input');
+    const cards = [...document.querySelectorAll<HTMLElement>('[data-note]')];
+    const applyFilters = () => {
+      const params = new URLSearchParams(location.search);
+      const q = (params.get('q') ?? '').trim();
+      const tag = params.get('tag') ?? '';
+      if (query) query.value = q;
+      if (tagInput) tagInput.value = tag;
+      let count = 0;
+      cards.forEach(card => {
+        const matches = (card.dataset.search ?? '').includes(q.toLocaleLowerCase()) && (!tag || JSON.parse(card.dataset.tags ?? '[]').includes(tag));
+        card.hidden = !matches;
+        if (matches) count++;
+      });
+      document.querySelectorAll<HTMLAnchorElement>('[data-filter-tag]').forEach(link => {
+        link.setAttribute('aria-current', String(link.dataset.filterTag === tag));
+        const next = new URLSearchParams();
+        if (q) next.set('q', q);
+        if (link.dataset.filterTag) next.set('tag', link.dataset.filterTag);
+        link.href = '/notes/' + (next.size ? '?' + next.toString() : '');
+      });
+      const empty = document.querySelector<HTMLElement>('#empty-state');
+      if (empty) empty.hidden = count > 0;
+      const status = document.querySelector('#result-count');
+      if (status) status.textContent = `${count} ${count === 1 ? 'note' : 'notes'}${tag ? ' · ' + tag : ''}`;
+    };
+    form?.addEventListener('submit', event => {
+      event.preventDefault();
+      const params = new URLSearchParams();
+      if (query?.value.trim()) params.set('q', query.value.trim());
+      if (tagInput?.value) params.set('tag', tagInput.value);
+      history.pushState({}, '', '/notes/' + (params.size ? '?' + params.toString() : ''));
+      applyFilters();
+    });
+    window.addEventListener('popstate', applyFilters);
+    applyFilters();
+  </script>}
+</Layout>

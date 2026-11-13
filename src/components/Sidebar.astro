@@ -1,0 +1,10 @@
+---
+import { tags, reading } from '../data/articles';
+import Icon from './Icon.astro';
+---
+<aside class="sidebar" aria-label="Notebook extras">
+  <section class="side-card now-card"><div class="side-heading"><h2>Now <span>最近的我</span></h2><span class="demo-label"></span></div><ul class="now-list"><li>正在閱讀：{reading.title}</li><li>規劃法國滑雪旅程</li><li>學習荷蘭文(Level B1, 持續中)</li><li>努力弄一點網站</li></ul></section>
+  <section class="side-card"><div class="side-heading"><h2>Currently Reading <span>正在閱讀</span></h2></div><div class="reading-content"><div class="book-cover" aria-hidden="true"><span>思辨賽局</span><Icon name="sprout" /><small>Avinash Dixit</small></div><div class="reading-info"><h3 lang="en">{reading.title}</h3><p>{reading.author}</p><div class="progress-row"><progress aria-label="Sample reading progress" max="100" value={reading.progress}></progress><span>{reading.progress}%</span></div></div></div></section>
+  <section class="side-card tag-card"><div class="side-heading"><h2>Explore by Tags <span>主題標籤</span></h2></div><div class="tags">{tags.map(tag => <a href={`/notes/?tag=${encodeURIComponent(tag)}`}># {tag}</a>)}</div></section>
+  <div class="sidebar-note"><Icon name="leaf" /><p>Anxious software engineer<br/>Trying to add more values in life<br/></p></div>
+</aside>

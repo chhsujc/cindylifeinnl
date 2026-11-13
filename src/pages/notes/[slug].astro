@@ -1,0 +1,13 @@
+---
+// Preserve links to the original sample article URLs.
+import { articles } from '../../data/articles';
+
+export function getStaticPaths() {
+  return articles.map(article => ({
+    params: { slug: article.slug },
+    props: { url: article.url },
+  }));
+}
+
+return Astro.redirect(Astro.props.url, 301);
+---

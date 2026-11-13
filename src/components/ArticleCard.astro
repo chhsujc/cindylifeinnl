@@ -1,0 +1,15 @@
+---
+import Icon from './Icon.astro';
+import { categories, type Article } from '../data/articles';
+interface Props { article: Article; }
+const { article } = Astro.props;
+const category = categories.find(c => c.id === article.category)!;
+---
+<article class:list={["article-card", { "without-image": !article.image }]} data-note data-search={[article.title, article.englishTitle, article.excerpt, ...article.tags].join(' ').toLocaleLowerCase()} data-tags={JSON.stringify(article.tags)}>
+  {article.image && <a class="article-image" href={article.url} tabindex="-1" aria-hidden="true"><img src={article.image} alt="" width="640" height="400" loading="lazy" /></a>}
+  <div class="article-info"><a class="badge" href={`/${category.id}/`}>{category.en} <span>{category.zh}</span></a>
+    <h3><a href={article.url}>{article.title}{article.englishTitle && <span class="english-title" lang="en">{article.englishTitle}</span>}</a></h3>
+    <p class="excerpt">{article.excerpt}</p>
+    <div class="article-meta"><span><Icon name="calendar" /><time datetime={article.date}>{article.date}</time></span><span><Icon name="clock" />{article.readingMinutes} min read</span>{article.sample && <span class="sample-marker">Sample · 示範</span>}</div>
+  </div>
+</article>
