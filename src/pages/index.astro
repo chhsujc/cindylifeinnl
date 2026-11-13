@@ -1,16 +1,12 @@
-<a href="/">Home</a>
-<a href="/about/">About</a>
-<a href="/lifeinnl/">Life in NL</a>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>My first blog site</h1>
-	</body>
-</html>
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { articles, categories } from '../data/articles';
+---
+<Layout>
+  <section class="hero"><img class="hero-image" src="/images/amsterdam.jpg" alt="Amsterdam canal lined with historic houses and trees" width="1800" height="1100" fetchpriority="high" /><div class="hero-inner container"><div class="hero-copy"><p class="eyebrow">A PLACE FOR EVERYDAY WONDER</p><h1>在荷蘭生活、四處旅行，<br/>並在書裡思考世界。</h1><p class="hero-english" lang="en">A personal notebook on life in the Netherlands,<br class="desktop-break"/> travels around the world, and ideas from books.</p><span class="hero-rule"></span></div></div></section>
+  <div class="container"><section class="category-grid" aria-label="Explore categories">{categories.map(category => <a class="category-tile" href={`/${category.id}/`}><Icon name={category.icon} /><span><h2>{category.en} <span>{category.zh}</span></h2><p>{category.description}</p></span></a>)}</section>
+  <div class="content-grid"><section><div class="section-heading"><h2>Latest Notes <span>最新文章</span></h2><a href="/notes/" class="text-link">View all <Icon name="arrow" /></a></div><div class="article-list">{articles.map(article => <ArticleCard article={article} />)}</div><a class="more-notes" href="/notes/">更多筆記 · All notes <Icon name="arrow" /></a></section><Sidebar /></div></div>
+</Layout>
